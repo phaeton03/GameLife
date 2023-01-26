@@ -2,8 +2,10 @@ export {createField, updateFieldCell, clearField, fieldCellState}
 import {Cell} from "./cell";
 
 const cellSize = new Cell(20, 20);
+const cellBorderSize = 0.5;
+
 let fieldCellState: Array<number>[];
-let fieldFillCellState: Set<Cell> = new Set<Cell>();
+const fieldFillCellState: Set<Cell> = new Set<Cell>();
 
 function createField(sizeX: number, sizeY: number): void {
   fieldCellState = Array.from({length: sizeY}).map(() =>
@@ -59,7 +61,8 @@ function updateFieldCell(event: MouseEvent): void {
     fieldContext.fillStyle = "white";
   }
 
-  fieldContext.fillRect(cellX * cellSize.sizeX + 0.5, cellY * cellSize.sizeY + 0.5, cellSize.sizeX - 1, cellSize.sizeY - 1);
+  fieldContext.fillRect(cellX * cellSize.sizeX + cellBorderSize, cellY * cellSize.sizeY + cellBorderSize,
+    cellSize.sizeX - 2 * cellBorderSize, cellSize.sizeY - 2 * cellBorderSize);
 }
 
 function clearField(): void {
