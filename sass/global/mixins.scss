@@ -1,0 +1,4 @@
+@mixin fieldSize ($sizeX: 100, $sizeY: 100) {
+  grid-template-rows: repeat($sizeY, 1fr);
+  grid-template-columns: repeat($sizeX, 1fr);
+}

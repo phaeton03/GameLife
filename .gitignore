@@ -3,4 +3,8 @@
 # Useful .gitignore templates: https://github.com/github/gitignore
 node_modules
 dist
+.idea
+*.iws
+*.iml
+*.ipr
 .cache
