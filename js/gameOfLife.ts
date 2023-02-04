@@ -17,6 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 fieldCanvas.addEventListener("click", (ev) => field.updateFieldCell(ev));
+buttonStartStop.addEventListener("click", () => {
+  if (!gameIsRunning) {
+    startGame();
+  } else {
+    stopGame();
+  }
+});
 
 function stopGame() {
   gameIsRunning = false;
@@ -25,19 +32,9 @@ function stopGame() {
   clearInterval(timer);
 }
 function startGame() {
-  // При клике по кнопке старт
-  // - поменять надпись на `Stop`
   gameIsRunning = true;
   buttonStartStop.innerHTML = "Stop";
-  // - запустить таймер для обновления поля
   timer = setInterval(() => {
-    // В таймере обновления поля
-    // - посчитать новое состояние поля
-    // - отрисовать новое состояние поля
-    // - проверить, что есть живые клетки
-    // - если живых клеток нет
-    //    - остановить таймер
-    //    - вывести сообщение
     calculateNewGeneration(field.getFieldContext(fieldCanvas));
     if (!isAnyoneAlive()) {
       alert("Death on the block");
@@ -45,5 +42,6 @@ function startGame() {
     }
   }, 1000);
 }
+
 
 
