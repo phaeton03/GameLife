@@ -1,21 +1,33 @@
-export {createField, updateFieldCell, clearField, fieldCellState}
+export {createField, updateFieldCell, clearField, fieldCellState, fieldFillCellState}
 import {Cell} from "./cell";
+import {
+  fieldCellState,
+  fieldFillCellState,
+  deleteFillFieldState,
+  addFillFieldState,
+  initFieldState
+} from "./fieldState";
 
 const cellSize = new Cell(20, 20);
 const cellBorderSize = 0.5;
+const EMPTY_STATE_COLOR = "white";
+const FILL_STATE_COLOR = "black";
 
-let fieldCellState: Array<number>[];
-const fieldFillCellState: Set<Cell> = new Set<Cell>();
+const fieldStateMap = new Map([
+  [0, (x: number, y: number, context: CanvasRenderingContext2D) => {
+    addFillFieldState(x, y);
+    context.fillStyle = EMPTY_STATE_COLOR;
+  }],
+  [1, (x: number, y: number, context: CanvasRenderingContext2D) => {
+    deleteFillFieldState(x, y);
+    context.fillStyle = FILL_STATE_COLOR;
+  }]
+]);
 
 function createField(sizeX: number, sizeY: number): void {
-  fieldCellState = Array.from({length: sizeY}).map(() =>
-    Array.from({length: sizeX}).fill(0)
-  ) as Array<number>[];
+  initFieldState(sizeX, sizeY);
 
   const field = document.querySelector(".field") as HTMLCanvasElement;
-
-  field.style.setProperty('width', `${sizeX}`);
-  field.style.setProperty('height', `${sizeY}`);
   field.width = sizeX;
   field.height = sizeY;
 
@@ -25,12 +37,12 @@ function createField(sizeX: number, sizeY: number): void {
     throw Error("Empty context!");
   }
 
-  for (let x = 0; x < sizeX; x += cellSize.sizeX) {
+  for (let x = 0; x < sizeX; x += cellSize.coordX) {
     fieldContext.moveTo(x, 0);
     fieldContext.lineTo(x, sizeY);
   }
 
-  for (let y = 0; y < sizeY; y += cellSize.sizeY) {
+  for (let y = 0; y < sizeY; y += cellSize.coordY) {
     fieldContext.moveTo(0, y);
     fieldContext.lineTo(sizeX, y);
   }
@@ -43,37 +55,35 @@ function updateFieldCell(event: MouseEvent): void {
   const field = document.querySelector(".field") as HTMLCanvasElement;
   console.log("x " + event.clientX, "y" + event.clientY)
   console.log("offsetLeft " + field.offsetLeft, "offsetTop " + field.offsetTop)
-  const cellX = Math.floor((event.clientX - field.offsetLeft) / cellSize.sizeX);
-  const cellY = Math.floor((event.clientY - field.offsetTop) / cellSize.sizeY);
+  const cellX = Math.floor((event.clientX - field.offsetLeft) / cellSize.coordX);
+  const cellY = Math.floor((event.clientY - field.offsetTop) / cellSize.coordY);
   console.log("cellX " + cellX, "cellY " + cellY);
 
   const fieldContext = getFieldContext(field);
 
-  if (!fieldCellState[cellX][cellY]) {
-    console.log("true");
-    fieldCellState[cellX][cellY] = 1;
-    fieldContext.fillStyle = "black";
-    fieldFillCellState.add(new Cell(cellX, cellY));
-  } else {
-    console.log("false");
-    fieldCellState[cellX][cellY] = 0;
-    fieldFillCellState.delete(new Cell(cellX, cellY));
-    fieldContext.fillStyle = "white";
+  const filledFieldState = fieldStateMap.get(fieldCellState[cellX][cellY]);
+  if (!filledFieldState) {
+    throw Error('Absent field state exception');
   }
+  filledFieldState(cellX, cellY, fieldContext);
 
-  fieldContext.fillRect(cellX * cellSize.sizeX + cellBorderSize, cellY * cellSize.sizeY + cellBorderSize,
-    cellSize.sizeX - 2 * cellBorderSize, cellSize.sizeY - 2 * cellBorderSize);
+  fieldContext.fillRect(cellX * cellSize.coordX + cellBorderSize, cellY * cellSize.coordY + cellBorderSize,
+    cellSize.coordX - 2 * cellBorderSize, cellSize.coordY - 2 * cellBorderSize);
 }
 
 function clearField(): void {
   const field = document.querySelector(".field") as HTMLCanvasElement;
   const fieldContext = getFieldContext(field);
   fieldContext.fillStyle = "white";
-  // fieldFillCellState.forEach((cell) => {
-  //
-  // })
 
-  fieldContext.clearRect(0, 0, field.width, field.height);
+  fieldFillCellState.forEach((cell) => {
+    fieldContext.fillRect(cell.coordX * cellSize.coordX + cellBorderSize, cell.coordY * cellSize.coordY + cellBorderSize,
+      cellSize.coordX - 2 * cellBorderSize, cellSize.coordY - 2 * cellBorderSize);
+  });
+
+  initFieldState(fieldCellState.length, fieldCellState[0].length);
+
+  fieldFillCellState.clear();
 }
 
 function getFieldContext(field: HTMLCanvasElement): CanvasRenderingContext2D {
@@ -86,3 +96,8 @@ function getFieldContext(field: HTMLCanvasElement): CanvasRenderingContext2D {
   return fieldContext;
 }
 
+
+// export function getFillFieldState(cellX: number, cellY: number): Cell | undefined {
+//
+//   return [...fieldFillCellState].find(cell => cell === new Cell(cellX, cellY)) || 5;
+// }

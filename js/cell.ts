@@ -1,9 +1,9 @@
 export class Cell {
-  sizeX: number;
-  sizeY: number;
+  coordX: number;
+  coordY: number;
 
   constructor(sizeX: number, sizeY: number) {
-    this.sizeX = sizeX;
-    this.sizeY = sizeY;
+    this.coordX = sizeX;
+    this.coordY = sizeY;
   }
 }
