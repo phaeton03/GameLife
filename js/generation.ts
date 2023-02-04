@@ -1,5 +1,6 @@
 import {Cell} from "./cell";
 import {addFillFieldState, deleteFillFieldState, fieldCellState, fieldFillCellState, isAlive} from "./fieldState";
+import {drawFieldCanvas, fieldStateMap} from "./field";
 
 export function getNumberOfAliveNeighbours(cellX: number, cellY: number): number {
   let neighbours = 0;
@@ -33,7 +34,7 @@ export function getNewState(cellX: number, cellY: number): number {
   return fieldCellState[cellX][cellY];
 }
 
-export function calculateNewGeneration() {
+export function calculateNewGeneration(context: CanvasRenderingContext2D) {
   const tempFieldCellState = new Map<Cell, number>();
 
   fieldFillCellState.forEach(cell => {
@@ -45,11 +46,12 @@ export function calculateNewGeneration() {
   });
 
   tempFieldCellState.forEach((state, cell) => {
-    if(state === 0) {
-      addFillFieldState(cell.coordX, cell.coordY);
-    } else {
-      deleteFillFieldState(cell.coordX, cell.coordY);
+    const changeFieldState = fieldStateMap.get(state);
+
+    if(!changeFieldState) {
+      throw Error('Absent field state exception');
     }
+    changeFieldState(cell.coordX, cell.coordY, context);
   });
 
 }

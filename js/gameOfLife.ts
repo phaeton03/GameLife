@@ -1,5 +1,6 @@
 import * as field from "./field"
 import {isAnyoneAlive} from "./fieldState";
+import {calculateNewGeneration} from "./generation";
 //let fieldState;
 const DEFAULT_SIZE_X = 1000;
 const DEFAULT_SIZE_Y = 1000;
@@ -37,8 +38,7 @@ function startGame() {
     // - если живых клеток нет
     //    - остановить таймер
     //    - вывести сообщение
-    field = getNextState(field);
-    drawField(fieldWrapper, field, cellClickHandler);
+    calculateNewGeneration(field.getFieldContext(fieldCanvas));
     if (!isAnyoneAlive()) {
       alert("Death on the block");
       stopGame();

@@ -13,7 +13,7 @@ const cellBorderSize = 0.5;
 const EMPTY_STATE_COLOR = "white";
 const FILL_STATE_COLOR = "black";
 
-const fieldStateMap = new Map([
+export const fieldStateMap = new Map([
   [0, (x: number, y: number, context: CanvasRenderingContext2D) => {
     addFillFieldState(x, y);
     context.fillStyle = EMPTY_STATE_COLOR;
@@ -51,16 +51,9 @@ function createField(sizeX: number, sizeY: number): void {
   fieldContext.stroke();
 }
 
-function updateFieldCell(event: MouseEvent): void {
+export function drawFieldCanvas(cellX: number, cellY: number): void {
   const field = document.querySelector(".field") as HTMLCanvasElement;
-  console.log("x " + event.clientX, "y" + event.clientY)
-  console.log("offsetLeft " + field.offsetLeft, "offsetTop " + field.offsetTop)
-  const cellX = Math.floor((event.clientX - field.offsetLeft) / cellSize.coordX);
-  const cellY = Math.floor((event.clientY - field.offsetTop) / cellSize.coordY);
-  console.log("cellX " + cellX, "cellY " + cellY);
-
   const fieldContext = getFieldContext(field);
-
   const filledFieldState = fieldStateMap.get(fieldCellState[cellX][cellY]);
   if (!filledFieldState) {
     throw Error('Absent field state exception');
@@ -69,6 +62,17 @@ function updateFieldCell(event: MouseEvent): void {
 
   fieldContext.fillRect(cellX * cellSize.coordX + cellBorderSize, cellY * cellSize.coordY + cellBorderSize,
     cellSize.coordX - 2 * cellBorderSize, cellSize.coordY - 2 * cellBorderSize);
+}
+
+function updateFieldCell(event: MouseEvent): void {
+  const field = document.querySelector(".field") as HTMLCanvasElement;
+  console.log("x " + event.clientX, "y" + event.clientY)
+  console.log("offsetLeft " + field.offsetLeft, "offsetTop " + field.offsetTop)
+  const cellX = Math.floor((event.clientX - field.offsetLeft) / cellSize.coordX);
+  const cellY = Math.floor((event.clientY - field.offsetTop) / cellSize.coordY);
+  console.log("cellX " + cellX, "cellY " + cellY);
+
+  drawFieldCanvas(cellX, cellY);
 }
 
 function clearField(): void {
@@ -86,7 +90,7 @@ function clearField(): void {
   fieldFillCellState.clear();
 }
 
-function getFieldContext(field: HTMLCanvasElement): CanvasRenderingContext2D {
+export function getFieldContext(field: HTMLCanvasElement): CanvasRenderingContext2D {
   const fieldContext = field.getContext('2d');
 
   if (!fieldContext) {
