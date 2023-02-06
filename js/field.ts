@@ -16,11 +16,11 @@ const FILL_STATE_COLOR = "black";
 export const fieldStateMap = new Map([
   [0, (x: number, y: number, context: CanvasRenderingContext2D) => {
     addFillFieldState(x, y);
-    context.fillStyle = EMPTY_STATE_COLOR;
+    context.fillStyle = FILL_STATE_COLOR;
   }],
   [1, (x: number, y: number, context: CanvasRenderingContext2D) => {
     deleteFillFieldState(x, y);
-    context.fillStyle = FILL_STATE_COLOR;
+    context.fillStyle = EMPTY_STATE_COLOR;
   }]
 ]);
 
@@ -73,6 +73,8 @@ function updateFieldCell(event: MouseEvent): void {
   console.log("cellX " + cellX, "cellY " + cellY);
 
   drawFieldCanvas(cellX, cellY);
+
+  console.log(fieldFillCellState);
 }
 
 function clearField(): void {

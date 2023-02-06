@@ -1,7 +1,7 @@
 import {Cell} from "./cell";
 
 export let fieldCellState: Array<number>[];
-export const fieldFillCellState: Set<Cell> = new Set<Cell>();
+export let fieldFillCellState: Set<Cell>;
 
 export function addFillFieldState(cellX: number, cellY: number) {
   fieldCellState[cellX][cellY] = 1;
@@ -27,6 +27,8 @@ export function initFieldState(sizeX: number, sizeY: number): void {
   fieldCellState = Array.from({length: sizeX}).map(() =>
     Array.from({length: sizeY}).fill(0)
   ) as Array<number>[];
+
+  fieldFillCellState = new Set<Cell>();
 }
 
 

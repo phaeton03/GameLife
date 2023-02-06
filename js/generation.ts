@@ -37,10 +37,13 @@ export function getNewState(cellX: number, cellY: number): number {
 export function calculateNewGeneration(context: CanvasRenderingContext2D) {
   const tempFieldCellState = new Map<Cell, number>();
 
+  console.log(fieldFillCellState);
+
   fieldFillCellState.forEach(cell => {
     for (let i = cell.coordX - 1; i <= cell.coordX + 1; i += 1) {
       for (let j = cell.coordY - 1; j <= cell.coordY + 1; j += 1) {
         tempFieldCellState.set(new Cell(i, j), getNewState(i, j));
+        console.log(tempFieldCellState);
       }
     }
   });
@@ -53,5 +56,4 @@ export function calculateNewGeneration(context: CanvasRenderingContext2D) {
     }
     changeFieldState(cell.coordX, cell.coordY, context);
   });
-
 }

@@ -40,7 +40,7 @@ function startGame() {
       alert("Death on the block");
       stopGame();
     }
-  }, 1000);
+  }, 10);
 }
 
 
